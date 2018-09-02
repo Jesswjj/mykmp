@@ -2,7 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-static long int kmpcnt = 0;
+static unsigned long int kmpcnt = 0;
+
+/* get prefix str*/
 void get_prefix_tbl(char *pattern, unsigned int len, unsigned int *prefix_tbl)
 {
     unsigned int k, q;
@@ -22,7 +24,12 @@ void get_prefix_tbl(char *pattern, unsigned int len, unsigned int *prefix_tbl)
     }
 }
 
-int kmp_find(char *text, unsigned int textlen, char *pattern, unsigned int patternlen)
+/* 	use kmp to find str
+	text: The Source string to be searched
+	pattern: Target string
+	return val: error is -1, success is num of place
+*/
+unsigned long int kmp_find(char *text, unsigned int textlen, char *pattern, unsigned int patternlen)
 {
     unsigned int i, q = 0;
     unsigned int *prefix_tbl = (unsigned int*)calloc(sizeof(int), patternlen);
@@ -32,19 +39,23 @@ int kmp_find(char *text, unsigned int textlen, char *pattern, unsigned int patte
     for (i = 0; i < textlen; i++)
     {
         kmpcnt++;
+
         while (q > 0 && pattern[q] != text[i])
         {
             kmpcnt++;
             q = prefix_tbl[q - 1];
         }
+
         if (pattern[q] == (text[i]))
             q++;
+
         if (q == patternlen)
         {
             printf("kmp_find cnt:%ld\n", kmpcnt);
             return i+1-patternlen;
         }
 	}
+
 	free(prefix_tbl);
 
 	return -1;
